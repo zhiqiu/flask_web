@@ -1,0 +1,19 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+  <table>
+  <tr align='top'>
+  <h4>用户名: {{ user.username }}  </h4>
+  <h4>邮箱: {{ user.email }}  </h4>
+   <h4>电话: {{ user.phone }}  </h4>
+  </tr>
+  </table>
+  <hr>
+  <h3> 你的上传记录 </h3>
+ <br> 
+  {% for post in posts %}
+    {%include 'post.html' %}    
+  {% endfor %}
+{% endblock %}
+

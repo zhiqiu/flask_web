@@ -1,0 +1,22 @@
+<html>
+<!-- extend base layout -->
+{% extends "base.html" %}
+ 
+{% block content %}
+<h1>欢迎使用</h1>
+{{error}}
+<form action="" method="post" name="login">
+    {{form.hidden_tag()}}
+    <p>
+        用户名:{{form.username(size=80)}}<br>
+    </p>
+    <p>
+        密码: {{form.password(size=80)}}<br>
+    </p>
+    <p>{{form.remember_me}} 记住登录</p>
+    <p><input type="submit" value="登录"></p>
+    <a href = "{{url_for('register')}}"> <button type="button" value = "注册">注册 </button></a>
+</form>
+
+{% endblock %}
+</html>

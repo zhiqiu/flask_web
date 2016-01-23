@@ -1,0 +1,10 @@
+<table>
+    <tr valign="top">
+        {% if g.user.role == 1%}
+        </td><td>{{ post.username }} 上传了 <a href = "{{url_for('uploads',postname =post.uri_name)}}">{{ post.postname }}</a> ，时间是 {{ post.timestamp }}</td>  
+        {% endif %}
+        {% if g.user.role == 0%}
+        </td><td>{{ post.username }} 上传了 <a href = "{{url_for('uploads',postname =post.uri_name)}}">{{ post.postname }}</a> ，时间是 {{ post.timestamp }}</td>
+        {% endif %}
+    </tr>
+</table>

@@ -1,0 +1,11 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+  <h3> 所有用户上传记录 </h3>
+ <br> 
+  {% for post in posts %}
+    {%include 'post.html' %}    
+  {% endfor %}
+{% endblock %}
+

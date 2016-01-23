@@ -1,0 +1,11 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+  <h3> 每日汇总数据 </h3>
+ <br> 
+  {% for d in dailys %}
+  <td><a href = "{{url_for('dailys',filename =d.filename)}}">{{ d.filename }}</a></td> </br>
+  {% endfor %}
+{% endblock %}
+
