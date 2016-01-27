@@ -1,6 +1,18 @@
 <html>
 <meta http-equiv=”Content-Type” content=”text/html; charset=utf-8″>
   <head>
+
+<!--[if IE]>
+    <script src="/static/js/html5shiv-printshiv.js"></script>
+
+<![endif]-->
+
+  <link rel="stylesheet" href="static/css/jquery-ui.css">
+  <script src="static/js/jquery-1.10.2.js"></script>
+  <script src="static/js/jquery-ui.js"></script>
+
+
+
     {% if title %}
     <title>{{title}} - 邮件信息系统</title>
     {% else %}
@@ -12,14 +24,14 @@
     <div> <h1>邮件收寄信息系统 </h1>
         </br>
         </br>
-        </briii·>
+        </br>
         <a href="{{ url_for('index') }}">首页</a>
         {% if g.user.is_authenticated %}
         | <a href="{{ url_for('user', username=g.user.username) }}">个人信息</a>
         | <a href="{{ url_for('upload') }}">上传表格</a>
+        | <a href="{{ url_for('daily') }}">汇总对账</a>
         {% if g.user.role == 1 %}
         | <a href="{{ url_for('all_posts') }}">所有上传</a>
-        | <a href="{{ url_for('daily') }}">每日汇总</a>
         {% endif %}
         | <a href="{{ url_for('logout') }}">退出</a>
         {% endif %}
@@ -29,7 +41,7 @@
     {% if messages %}
     <ul>
     {% for message in messages %}
-        <li>{{ message }} </li>
+        <li> <font color="#FF0000">{{error}}</font> </li>
     {% endfor %}
     </ul>
     {% endif %}

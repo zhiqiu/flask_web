@@ -10,6 +10,8 @@ from config import basedir
 from datetime import datetime, timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
 import xlrd, xlwt
+from flask_bootstrap import Bootstrap
+
 
 import sys
 reload(sys)
@@ -19,6 +21,8 @@ app = Flask(__name__)
 app.config.from_object('config')
 
 db  = SQLAlchemy(app)
+Bootstrap(app)
+
 
 lm = LoginManager()
 lm.init_app(app)
@@ -38,13 +42,18 @@ def open_excel(file):
 
  
 # 每天凌晨0点合并当天的表格
-def myjob():
-    
+def myjob(username, begin_date, end_date):
+    print username, begin_date, end_date 
     db = MySQLdb.connect(host="localhost",user="root",passwd="1340830",db="flask",charset='utf8' )
     cursor = db.cursor()
-    sql = "select * from post"
-    cursor.execute(sql)
-    print datetime.now()
+    if username == u'所有客户':
+        cursor.execute( "select * from post")
+    else:
+        cursor.execute('select id from user where user.username = %s'% (username))
+        user_id = cursor.fetchone()
+        cursor.execute('select * from post where post.user_id = %s'% (user_id))
+    #cursor.execute(sql)
+    #print datetime.now()
     res = cursor.fetchall()
     workbook = xlwt.Workbook()
     out = workbook.add_sheet('Sheet')
@@ -57,8 +66,8 @@ def myjob():
         for row in res:
             postname = row[1]
             timestamp = row[2]
-            yesterday = datetime.today() - timedelta(days=1) 
-            if timestamp.date()== yesterday.date():
+            #yesterday = datetime.today() - timedelta(days=1) 
+            if timestamp.date()<= end_date.date() and timestamp.date() >= begin_date.date():
             #if timestamp.hour== yesterday.hour:
                 file = app.config['UPLOAD_FOLDER']+postname
                 #print file, os.path.exists(file)
@@ -71,7 +80,10 @@ def myjob():
                     firstfile = False
                 except Exception, e:
                     print e
-        filename = yesterday.strftime("%Y-%m-%d")+'.xls'
+        
+        filename = username + '_' + begin_date.strftime("%Y-%m-%d") + '_' + end_date.strftime("%Y-%m-%d") + '.xls'
+        #        return send_from_directory(app.config['DAILY_FOLDER'], filename)
+        #filename = yesterday.strftime("%Y-%m-%d")+'.xls'
         outpath = os.path.join(app.config['DAILY_FOLDER'],filename)
         workbook.save(outpath)
 
@@ -82,14 +94,14 @@ def myjob():
     db.close()
     #print len(results)
     print datetime.now()
+ 
 
 scheduler = BackgroundScheduler()
 #scheduler = APScheduler()
 #scheduler.init_app(app)
 #scheduler.start()
 
-scheduler.add_job(myjob, 'interval', hours = 24, start_date=('2016-01-22 00:00:00'))
-scheduler.start()
-myjob()
+#scheduler.add_job(myjob, 'interval', hours = 24, start_date=('2016-01-22 00:00:00'))
+#scheduler.start()
 from app import views
 

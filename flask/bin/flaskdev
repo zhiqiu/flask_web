@@ -1,0 +1,10 @@
+#!/home/chenql/shaoguan/flask/bin/python
+# EASY-INSTALL-ENTRY-SCRIPT: 'flask-appconfig==0.11.1','console_scripts','flaskdev'
+__requires__ = 'flask-appconfig==0.11.1'
+import sys
+from pkg_resources import load_entry_point
+
+if __name__ == '__main__':
+    sys.exit(
+        load_entry_point('flask-appconfig==0.11.1', 'console_scripts', 'flaskdev')()
+    )

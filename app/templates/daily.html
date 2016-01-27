@@ -1,11 +1,58 @@
 <!-- extend base layout -->
 {% extends "base.html" %}
 
+<head>
+
+</head>
+
+
 {% block content %}
-  <h3> 每日汇总数据 </h3>
- <br> 
+  <h3> 汇总对账 </h3>
+ <br>
+<form action="/daily" method="post">
+{%if g.user.role == 1 %}
+客户名称: <input type="text"  id='customer_name' name="customer_name" />
+</br>
+</br>
+{% endif %}
+开始日期: <input type="text" id="begin_date" name="begin_date" />
+</br>
+</br>
+结束日期: <input type="text" id="end_date" name="end_date" />
+</br>
+</br>
+<input type="submit" value = "汇总数据"/>
+</form>
+<!--
+<form action="./daily" method="get">
+<input type="submit" value = "合并当日数据" />
+</form>
+-->
+<!--
+<h4> 汇总数据列表</h4> 
   {% for d in dailys %}
   <td><a href = "{{url_for('dailys',filename =d.filename)}}">{{ d.filename }}</a></td> </br>
   {% endfor %}
+-->
+
+
+  <script>
+  $(document).ready(function() {
+    today = new Date();
+    datestr = (today.getDate());
+    datestr = datestr < 10 ? '0' + datestr : datestr;
+    monthstr = (today.getMonth()+1);
+    monthstr = monthstr < 10 ? '0' + monthstr : monthstr;
+    str = monthstr + "/"+datestr+'/'+today.getFullYear();
+    document.getElementById("begin_date").value = str;   
+    document.getElementById("end_date").value = str;   
+    {%if g.user.role==1%}
+    document.getElementById("customer_name").value = '所有客户';   
+    {%endif%}
+    $("#begin_date").datepicker({defaultDate : new Date()});
+    $("#end_date").datepicker({defaultDate : new Date()});
+  });
+  </script>	
+
 {% endblock %}
 

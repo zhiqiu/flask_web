@@ -3,7 +3,7 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from werkzeug import secure_filename
 
-from app import app, db, lm, oid, scheduler, myjob
+from app import app, db, lm, oid, scheduler, open_excel, myjob
 from flask import render_template
 from .forms import *
 from .db_models import User, Post, DailyFile, ROLE_USER, ROLE_ADMIN
@@ -22,6 +22,10 @@ from flask import Flask,render_template,request,url_for, make_response,redirect,
 ALLOWED_EXTENSIONS = set(['txt', 'csv', 'xls', 'xlsx'])
 
 
+
+
+
+
 def getPosts(user):
     posts= db.session.query(Post).filter_by(user_id=user.id).all()
     p = []
@@ -31,6 +35,14 @@ def getPosts(user):
         p += [{'username':user.username,"postname": postname,"timestamp":timestamp, 'uri_name':post.postname}] 
     return p
 
+@app.route('/test')
+def test():
+    return render_template('test.html')
+
+@app.route('/date')
+def date():
+    return render_template('date.html')
+ 
 
 @app.route('/') 
 @app.route('/index') 
@@ -174,19 +186,48 @@ def all_posts():
         postname = request.files['postname']
         
 
-@app.route('/daily')
+@app.route('/daily', methods = ['GET', 'POST'])
 @login_required
 def daily():
     user = g.user
-    if user.role == ROLE_ADMIN:
-        dailyfile= db.session.query(DailyFile).all()
-        dailys = []
-        #return str(len(posts))
-        for d in dailyfile:
-            dailys += [{'filename':d.filename}] 
-        return render_template('daily.html', dailys = dailys)
-    else:
-        return '你没有权限访问这个页面'
+    if request.method == 'GET':
+            #dailyfile= db.session.query(DailyFile).all()
+            #dailys = []
+            #return str(len(posts))
+            #for d in dailyfile:
+            #    dailys += [{'filename':d.filename}] 
+        return render_template('daily.html')
+    if request.method == 'POST': 
+        if user.role == ROLE_ADMIN:
+            customer_name = request.form['customer_name']             
+            begin_date = request.form['begin_date']             
+            end_date = request.form['end_date']
+            username = customer_name
+            user = db.session.query(User).filter_by(username=customer_name).first()
+            if user is not None or username == u'所有客户':
+                begindate = datetime.datetime.strptime(begin_date,'%m/%d/%Y')
+                enddate = datetime.datetime.strptime(end_date,'%m/%d/%Y')
+                myjob(username, begindate, enddate)
+                filename = username + '_' + begindate.strftime("%Y-%m-%d") + '_' + enddate.strftime("%Y-%m-%d") + '.xls'
+                return send_from_directory(app.config['DAILY_FOLDER'], filename)
+            else:
+                flash("无此客户")
+                return render_template('daily.html')
+        else:
+            customer_name = g.user.username             
+            begin_date = request.form['begin_date']             
+            end_date = request.form['end_date']
+            username = customer_name
+            user = db.session.query(User).filter_by(username=customer_name).first()
+            if user is not None :
+                begindate = datetime.datetime.strptime(begin_date,'%m/%d/%Y')
+                enddate = datetime.datetime.strptime(end_date,'%m/%d/%Y')
+                myjob(username, begindate, enddate)
+                filename = username + '_' + begindate.strftime("%Y-%m-%d") + '_' + enddate.strftime("%Y-%m-%d") + '.xls'
+                return send_from_directory(app.config['DAILY_FOLDER'], filename)
+            else:
+                flash("无该项数据")
+                return render_template('daily.html')
 
       
 @app.route('/dailys/<filename>')
