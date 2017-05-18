@@ -6,7 +6,7 @@ flask-extension
 easy_install apscheduler
 
 
-2. modify app/db.py 
+2. modify app/db.py  
     database_uri your_db  
     CREATE DATABASE `flask` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
