@@ -1,5 +1,9 @@
-1. install virtualenv,flask and mysql, flask-extension
-    easy_install apscheduler
+1. install 
+virtualenv  
+flask  
+mysql  
+flask-extension  
+easy_install apscheduler
 
 
 2. modify app/db.py 
